@@ -463,25 +463,28 @@ namespace AntdUI
         /// </summary>
         void UpdateScrollBarVirtualSize()
         {
-            if (ScrollBar == null || Controls.Count == 0) return;
+            if (ScrollBar == null) return;
+
+            // Ensure ScrollBar has the correct viewport size
+            var rect = ClientRectangle;
+            if (rect.Width > 0 && rect.Height > 0)
+            {
+                ScrollBar.SizeChange(rect);
+            }
 
             int maxX = 0, maxY = 0;
-            var displayRect = DisplayRectangle;
 
             foreach (Control control in Controls)
             {
                 if (!control.Visible) continue;
                 
+                // Calculate the rightmost and bottom-most positions including margins
                 int right = control.Right + control.Margin.Right;
                 int bottom = control.Bottom + control.Margin.Bottom;
                 
                 if (right > maxX) maxX = right;
                 if (bottom > maxY) maxY = bottom;
             }
-
-            // Add padding to account for panel's display rectangle offset
-            maxX += displayRect.Left;
-            maxY += displayRect.Top;
 
             ScrollBar.SetVrSize(maxX, maxY);
         }
