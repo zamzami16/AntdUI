@@ -455,6 +455,35 @@ namespace AntdUI
             base.OnSizeChanged(e);
             if (rect.Width == 0 || rect.Height == 0) return;
             ScrollBar?.SizeChange(rect);
+            UpdateScrollBarVirtualSize();
+        }
+
+        /// <summary>
+        /// Calculate and update the virtual content size for scrollbar
+        /// </summary>
+        void UpdateScrollBarVirtualSize()
+        {
+            if (ScrollBar == null || Controls.Count == 0) return;
+
+            int maxX = 0, maxY = 0;
+            var displayRect = DisplayRectangle;
+
+            foreach (Control control in Controls)
+            {
+                if (!control.Visible) continue;
+                
+                int right = control.Right + control.Margin.Right;
+                int bottom = control.Bottom + control.Margin.Bottom;
+                
+                if (right > maxX) maxX = right;
+                if (bottom > maxY) maxY = bottom;
+            }
+
+            // Add padding to account for panel's display rectangle offset
+            maxX += displayRect.Left;
+            maxY += displayRect.Top;
+
+            ScrollBar.SetVrSize(maxX, maxY);
         }
 
         protected override void OnDraw(DrawEventArgs e)
@@ -606,12 +635,25 @@ namespace AntdUI
         {
             base.OnControlAdded(e);
             e.Control!.GotFocus += Control_GotFocus;
+            e.Control.LocationChanged += Control_LayoutChanged;
+            e.Control.SizeChanged += Control_LayoutChanged;
+            e.Control.VisibleChanged += Control_LayoutChanged;
+            UpdateScrollBarVirtualSize();
         }
 
         protected override void OnControlRemoved(ControlEventArgs e)
         {
             base.OnControlRemoved(e);
             e.Control!.GotFocus -= Control_GotFocus;
+            e.Control.LocationChanged -= Control_LayoutChanged;
+            e.Control.SizeChanged -= Control_LayoutChanged;
+            e.Control.VisibleChanged -= Control_LayoutChanged;
+            UpdateScrollBarVirtualSize();
+        }
+
+        private void Control_LayoutChanged(object? sender, EventArgs e)
+        {
+            UpdateScrollBarVirtualSize();
         }
 
         private void Control_GotFocus(object? sender, EventArgs e)
@@ -646,7 +688,13 @@ namespace AntdUI
 
         protected override void Dispose(bool disposing)
         {
-            foreach (Control c in Controls) c.GotFocus -= Control_GotFocus;
+            foreach (Control c in Controls)
+            {
+                c.GotFocus -= Control_GotFocus;
+                c.LocationChanged -= Control_LayoutChanged;
+                c.SizeChanged -= Control_LayoutChanged;
+                c.VisibleChanged -= Control_LayoutChanged;
+            }
             ScrollBar?.Dispose();
             ThreadHover?.Dispose();
             ThreadHover = null;
