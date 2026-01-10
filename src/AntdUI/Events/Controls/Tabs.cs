@@ -4,6 +4,7 @@
 // GitHub: https://github.com/AntdUI/AntdUI
 // GitCode: https://gitcode.com/AntdUI/AntdUI
 
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace AntdUI
@@ -14,6 +15,33 @@ namespace AntdUI
     }
 
     public delegate bool ClosingPageEventHandler(object sender, ClosingPageEventArgs e);
+
+    /// <summary>
+    /// Provides data for the SelectedIndexChanging event
+    /// </summary>
+    public class TabIndexChangingEventArgs : CancelEventArgs
+    {
+        /// <summary>
+        /// Gets the current selected index before change
+        /// </summary>
+        public int OldIndex { get; }
+
+        /// <summary>
+        /// Gets the new index that will be selected if not cancelled
+        /// </summary>
+        public int NewIndex { get; }
+
+        public TabIndexChangingEventArgs(int oldIndex, int newIndex)
+        {
+            OldIndex = oldIndex;
+            NewIndex = newIndex;
+        }
+    }
+
+    /// <summary>
+    /// Represents the method that will handle the SelectedIndexChanging event
+    /// </summary>
+    public delegate void TabIndexChangingEventHandler(object sender, TabIndexChangingEventArgs e);
 
     public class TabsItemEventArgs : VMEventArgs<TabPage>
     {
