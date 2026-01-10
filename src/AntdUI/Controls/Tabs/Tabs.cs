@@ -427,21 +427,36 @@ namespace AntdUI
         #region 动画
 
         int _select = 0;
+
+        /// <summary>
+        /// Attempts to change the selected index, firing the SelectedIndexChanging event first.
+        /// </summary>
+        /// <param name="newIndex">The new index to select</param>
+        /// <returns>True if the index was changed, false if cancelled or same value</returns>
+        private bool TryChangeSelectedIndex(int newIndex)
+        {
+            if (_select == newIndex) return false;
+
+            // Call the changing event - can be cancelled
+            if (!OnSelectedIndexChanging(newIndex)) return false;
+
+            // Actually change the index
+            int old = _select;
+            _select = newIndex;
+            style.SelectedIndexChanged(newIndex, old);
+            Invalidate();
+            ShowPage(_select);
+            OnSelectedIndexChanged(newIndex);
+            OnPropertyChanged(nameof(SelectedIndex));
+
+            return true;
+        }
+
         [Description("选中序号"), Category("数据"), DefaultValue(0)]
         public int SelectedIndex
         {
             get => _select;
-            set
-            {
-                if (_select == value) return;
-                int old = _select;
-                _select = value;
-                style.SelectedIndexChanged(value, old);
-                Invalidate();
-                ShowPage(_select);
-                OnSelectedIndexChanged(value);
-                OnPropertyChanged(nameof(SelectedIndex));
-            }
+            set => TryChangeSelectedIndex(value);
         }
 
         internal void ShowPage(int index)
@@ -719,8 +734,8 @@ namespace AntdUI
                         int old = items.IndexOf(_pageMove);
                         int index = items.IndexOf(page);
                         items.InsertAntRemove(index, _pageMove);
-                        if (_select == index) SelectedIndex = old;
-                        else if (_select == old) SelectedIndex = index;
+                        if (_select == index) TryChangeSelectedIndex(old);
+                        else if (_select == old) TryChangeSelectedIndex(index);
                         return;
                     }
                     Invalidate();
@@ -735,13 +750,13 @@ namespace AntdUI
                             if (style.MouseClick(it, i, x, y)) return;
                             if (TabClick == null)
                             {
-                                SelectedIndex = i;
+                                TryChangeSelectedIndex(i);
                                 return;
                             }
                             var args = new TabsItemEventArgs(it, i, style, e);
                             TabClick(this, args);
                             if (args.Cancel) return;
-                            SelectedIndex = i;
+                            TryChangeSelectedIndex(i);
                         }
                         else Invalidate();
                         return;
@@ -815,7 +830,7 @@ namespace AntdUI
                     int index = SelectedIndex + (e.Delta > 0 ? -1 : 1);
                     if (index > -1 && index < Pages.Count)
                     {
-                        SelectedIndex = index;
+                        TryChangeSelectedIndex(index);
                         return;
                     }
                 }
@@ -1560,6 +1575,21 @@ namespace AntdUI
         #region 事件
 
         /// <summary>
+        /// Occurs before the SelectedIndex property value changes. Can be cancelled.
+        /// </summary>
+        [Description("Occurs before the SelectedIndex property value changes"), Category("行为")]
+        public event TabIndexChangingEventHandler? SelectedIndexChanging;
+
+        protected virtual bool OnSelectedIndexChanging(int newIndex)
+        {
+            if (SelectedIndexChanging == null) return true;
+
+            var args = new TabIndexChangingEventArgs(_select, newIndex);
+            SelectedIndexChanging?.Invoke(this, args);
+            return !args.Cancel;
+        }
+
+        /// <summary>
         /// SelectedIndex 属性值更改时发生
         /// </summary>
         [Description("SelectedIndex 属性值更改时发生"), Category("行为")]
@@ -1573,13 +1603,13 @@ namespace AntdUI
             int index = items.IndexOf(page);
             if (TabClick == null)
             {
-                SelectedIndex = index;
+                TryChangeSelectedIndex(index);
                 return;
             }
             var args = new TabsItemEventArgs(items[index], index, style, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0));
             TabClick(this, args);
             if (args.Cancel) return;
-            SelectedIndex = index;
+            TryChangeSelectedIndex(index);
         }
 
         /// <summary>
