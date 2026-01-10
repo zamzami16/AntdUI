@@ -1585,7 +1585,7 @@ namespace AntdUI
             if (SelectedIndexChanging == null) return true;
 
             var args = new TabIndexChangingEventArgs(_select, newIndex);
-            SelectedIndexChanging?.Invoke(this, args);
+            SelectedIndexChanging.Invoke(this, args);
             return !args.Cancel;
         }
 
