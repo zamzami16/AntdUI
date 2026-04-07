@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FontTest", "example\FontTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntdUI.EmojiFluentFlat", "src\AntdUI.EmojiFluentFlat\AntdUI.EmojiFluentFlat.csproj", "{3A032088-E22D-BFA0-83BC-B0CD61CAD7BF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableAutoWidthRepro", "example\TableAutoWidthRepro\TableAutoWidthRepro.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{3A032088-E22D-BFA0-83BC-B0CD61CAD7BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A032088-E22D-BFA0-83BC-B0CD61CAD7BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A032088-E22D-BFA0-83BC-B0CD61CAD7BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{796C3020-70CB-464D-A67A-66BCC566C6D8} = {B9AB491E-DDF2-4E3D-97FA-622E36504B91}
 		{94493153-4FF8-4F33-8589-D72A8563AF52} = {B9AB491E-DDF2-4E3D-97FA-622E36504B91}
 		{3A032088-E22D-BFA0-83BC-B0CD61CAD7BF} = {5243A57B-3E12-49E1-BA51-CBB5D786193F}
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890} = {B9AB491E-DDF2-4E3D-97FA-622E36504B91}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B151716-3D07-4DA4-8C4D-2D2BBE164EAA}
